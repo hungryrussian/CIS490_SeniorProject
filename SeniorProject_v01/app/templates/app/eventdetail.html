@@ -1,0 +1,126 @@
+﻿{% extends "app/layout.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+    <div class="row row-stripped color-bg">
+
+        <div class="col-2 text-right">
+		    <div class="time">
+                {% if event.date_start.day == event.date_end.day %}
+				    <div class="bk-day">{{ event.date_start.day}}</div>
+                {% else %}
+                    <div class="bk-day-multiple">{{ event.date_start.day}} - {{ event.date_end.day}}</div>
+                {% endif %}
+			    <div class="bk-month">{{ event.date_start|date:"M" }}</div>
+		    </div>
+	    </div>
+
+		<div class="col-md-10">
+			<div class="text-uppercase">
+                <strong>{{ event.name }}</strong>
+                <!-- if user is district admin or higher, give edit option -->
+                {% if permissions > 2 %}
+                <a class="btn btn-primary" href="{% url 'editevent' pk=event.id %}" role="button"><i class="fas fa-edit"></i> Edit</a>
+                {% elif event_troop == user_troop %}
+                <a class="btn btn-primary" href="{% url 'editevent' pk=event.id %}" role="button"><i class="fas fa-edit"></i> Edit</a>
+                {% endif %}
+            </div>
+			<ul class="list-inline">
+                {% if event.date_start.day == event.date_end.day %}
+				    <li class="list-inline-item"><i class="fas fa-calendar-alt" aria-hidden="true"></i> {{ event.date_start|date:'l F jS, Y' }}</li>
+				{% else %}
+				    <li class="list-inline-item"><i class="fas fa-calendar-alt" aria-hidden="true"></i> {{ event.date_start|date:'M jS' }} - {{ event.date_end|date:'M jS, Y' }}</li>
+                {% endif %}
+                <li class="list-inline-item"><i class="fas fa-clock" aria-hidden="true"></i> {{ event.date_start|date:'g:i A' }} - {{ event.date_end|date:'g:i A' }}</li>
+			</ul>
+            <ul class="list-inline">
+                <li class="list-inline-item"><i class="fas fa-location-arrow" aria-hidden="true"></i><strong> District: </strong> {{ event.district }}</li>
+                <li class="list-inline-item">
+                    {% if event.event_type.id == 6 %}
+                        <img src="{% static 'app/img/icons/national.svg' %}" class="event-fas" />
+                    {% elif event.event_type.id == 5 %}
+                        <img src="{% static 'app/img/icons/regional.svg' %}" class="event-fas" />
+                    {% elif event.event_type.id == 4 %}
+                        <img src="{% static 'app/img/icons/community.svg' %}" class="event-fas" />
+                    {% elif event.event_type.id == 3 %}
+                        <img src="{% static 'app/img/icons/training.svg' %}" class="event-fas" />
+                    {% elif event.event_type.id == 2 %}
+                        <img src="{% static 'app/img/icons/backpack.svg' %}" class="event-fas" />
+                    {% elif event.event_type.id == 1 %}
+                        <img src="{% static 'app/img/icons/camping.svg' %}" class="event-fas" />
+                    {% else %}
+                        <i class="far fa-question-circle"></i>
+                    {% endif %}
+
+                    <strong>Category: </strong>{{ event.event_type}}
+                </li>
+			</ul>
+
+            <table class="table">
+                <tr>
+                    <th scope="row">Description: </th>
+                    <td>
+                        {{ event.description }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Primary Contact: 
+                    <td>
+                        {{ event.primary_contact_name}}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Contact Information: </th>
+                    <td>
+                        {% if event.primary_contact_info_type == 1 %}
+                            <i class="fas fa-envelope"></i> 
+                        {% elif event.primary_contact_info_type == 0 %}
+                            <i class="fas fa-phone"></i> 
+                        {% endif %}
+                        {{ event.primary_contact_info }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Payment: </th>
+                    <td>
+                        <a href="{{ event.payment_url }}">{{ event.payment_url }}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Address: </th>
+                    <td>
+                        {{ event.address }}
+                        <br /><i class="far fa-compass"></i> <a href="{{ url }}" target="_blank"><strong>Get Directions</strong></a>
+                    </td>
+
+            </table>
+		</div>
+
+        <div id="map"></div>
+
+<script>
+    function initMap() {
+        var location = {
+            lat: {{ event.coord_x }},
+            lng: {{ event.coord_y }}
+            };
+
+      var map = new google.maps.Map(
+          document.getElementById('map'), {zoom: 14, center: location});
+
+      var marker = new google.maps.Marker( {position: location, map: map} );
+    }
+</script>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0aaavBcFWIBvn3Tnu86BYOpKHqYVqKR8&callback=initMap">
+</script>
+
+
+{% endblock %}

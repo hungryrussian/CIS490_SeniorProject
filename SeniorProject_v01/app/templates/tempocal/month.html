@@ -1,0 +1,37 @@
+{% load relative_url %}
+
+<table class="calHeader" style="width:100%">
+    <tbody>
+        <tr>
+            <td class="header-left">
+                <span class="header-title">
+                </span>
+            </td>
+            <td class="header-center">
+                    <h2>{{ month_name_row }}</h2>
+            </td>
+            <!-- MONTH NAVIGATION LINKS IN HEADER CORNER -->
+            <td class="header-right">
+                <!-- --------------------------- PREVIOUS MONTH -------------------------------- -->
+                <a class="btn btn-primary" href="?month={{ monthMM }}&year={{ yearMM }}" role="button"><i class="fas fa-chevron-circle-left"></i></a>
+                <!-- --------------------------- NEXT MONTH -------------------------------- -->
+                <a class="btn btn-primary" href="?month={{ monthPP }}&year={{ yearPP }}" role="button"><i class="fas fa-chevron-circle-right"></i></a>
+            </td>
+        </tr>
+    </tbody>
+    
+</table>
+<table class="month oafcal" style="width:100%" cellspacing="0">
+    <thead>
+        <tr>
+		    {{ week_header_row }}
+        </tr>
+	</thead>
+	<tbody>
+        
+	        {% for week in week_rows %}
+		        {{ week }}
+	        {% endfor %}
+            
+	</tbody>
+</table>

@@ -1,0 +1,22 @@
+﻿{% extends "app/layout.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="wrapper-trans">
+
+    {% if eventlist %}
+    <ul>
+    {% for event in eventlist %}
+        <li>{{ event.name }} - <a class="btn btn-primary" href="/event/{{event.id}}" role="button">Link</a></li>
+    {% endfor %}
+    </ul>
+    {% else %}
+    <p>No events are available.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

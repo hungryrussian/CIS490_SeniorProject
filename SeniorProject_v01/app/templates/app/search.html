@@ -1,0 +1,56 @@
+﻿{% extends "app/layout.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% load append_ast_if_req %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+<div class="row">
+    <div class="col">
+        <h1 class="text-center">Search</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 col-md-4">
+        <!-- Search Form -->
+        <form method="GET">
+            {% csrf_token %}
+
+            {% for hidden in filter.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            {% for field in filter.visible_fields %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field | append_ast_if_req }}</label>
+
+                    {{ field|add_class:'form-control' }}
+
+                    {% for error in field.errors %}
+                        <span class="field-validation-error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <button class="btn btn-primary" type="submit">
+                <i class="fas fa-search navbar-fas"></i>Search
+            </button>
+        </form>
+        <a href="search" class="btn btn-primary"><i class="fas fa-times-circle navbar-fas"></i>Reset Filters</a>
+    </div>
+    <div class="col">
+        <!-- display the calender -->
+        {{ month_table }}
+    </div>
+</div>
+
+<!-- not logged in display error -->
+{% else %}
+<div class="col">
+    {% include "app/authentication_error.html" %}
+</div>
+{% endif %}
+
+{% endblock %}
